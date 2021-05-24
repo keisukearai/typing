@@ -1,0 +1,257 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>タイピングアプリ</title>
+    <style>
+        body {
+            font-size: 6em; 
+            text-align: center;
+        }
+        #counter {
+            margin: 0;
+            font-weight: bold;
+            color: #888;
+        }
+        #wrap {
+            margin-top: 20px;
+            padding: 20px 10px;
+            background-color: #666;
+            font-weight: bold;
+            color: #fff;
+        }
+        #msg {
+            font-size: 1rem; 
+            margin-top: 20px;
+            padding: 20px 10px;
+            background-color: #4169e1;
+            font-weight: bold;
+            color: #fff;
+            display: none;
+        }
+        #input_text {
+            font-size: 1rem; 
+            margin-top: 10px;
+            padding: 20px 10px;
+            background-color: #666;
+            font-weight: bold;
+            color: #fff;
+            display: none;
+        }
+        #btn_reload {
+            text-align: center;
+        }
+        span {
+            transition-property: all;
+            transition-duration: 300ms;
+            transition-timing-function: ease;
+            transition-delay: 0s;
+        }
+        .add-color {
+            font-size: 0.5em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <p id="counter">3</p>
+    <div id="wrap">
+        <p id="disp_text"></p>
+    </div>
+    <p id="input_text"></p>
+    <p id="msg"></p>
+    <button id="btn_start">スタート</button>
+    <button id="btn_reload" onclick="window.location.reload();">リロード</button>
+
+    <script>
+        // スタートボタン
+        let btn_start = document.getElementById('btn_start');
+        // リロードボタン
+        let btn_reload = document.getElementById('btn_reload');
+        // 入力エリア
+        let input_text = document.getElementById('input_text');
+        // 結果エリア
+        let msg = document.getElementById('msg');
+
+        // 複数のテキストを格納する配列
+        const textLists = [
+                'Hello',
+                'App',
+                'How'
+        ];
+
+        // キーイベントとの共有用変数
+        let checkTexts = [];
+        // タイマー格納用変数
+        let time = 0;
+        // setIntervalの結果格納変数
+        let timer_id = "";
+        // スコアー
+        let score = 0;
+        // 入力用変数
+        let inputTexts = [];
+        
+        /*
+         * ゲームスタート時の処理
+         */
+        btn_start.addEventListener('click', () => {
+            // ランダムなテキストを画面に表示
+            createText();
+
+            // タイマー処理
+            timer();
+            
+            // 表示関連設定
+            disp_setting();
+
+            // キーボードのイベント処理を追加
+            document.addEventListener('keydown', keyDownEvent);
+        });
+
+        /*
+         * ランダムなテキストを画面に表示する
+         */
+        function createText() {
+            // 文字を表示させる要素を取得
+            let disp_text = document.getElementById('disp_text');
+            // p要素の中身を空っぽにする
+            disp_text.textContent = '';
+
+            // 配列のインデックス数からランダムな数値を生成する
+            let rnd = Math.floor(Math.random() * textLists.length);
+            // ランダム値からテキストを抜き出す
+            let rnd_text = textLists[rnd];
+            // テキストの分割
+            let ary_rnd_text = rnd_text.split('');
+            // console.log(ary_rnd_text);
+
+            // 配列の件数分繰り返し
+            for (let i = 0; i < ary_rnd_text.length; i++) {
+                // span要素を生成する
+                let span = document.createElement('span');
+                // 生成したspan要素に1文字格納
+                span.textContent = ary_rnd_text[i];
+                // span要素をp要素に追加していく
+                disp_text.appendChild(span);
+                // キーイベントとの共有用変数にも設定
+                checkTexts[i] = span;
+            }
+            // console.log(checkTexts);
+        }
+
+        /*
+         * タイマー処理
+         */
+        function timer() {
+            // タイマー要素を取得する
+            let counter = document.getElementById('counter');
+            // カウント情報を取得して設定
+            time = counter.textContent;
+            // console.log(time);
+            // タイマーイベント処理
+            timer_id = setInterval(timerEvent, 1000, counter);
+        }
+
+        /*
+         * タイマーイベント処理
+         */
+        function timerEvent(counter) {
+            // タイマーが0以下になった場合は処理を終了
+            if (time <= 0) {
+                // タイマー終了
+                gameOver(timer_id);
+            }
+            // カウンターをマイナス1する
+            counter.textContent = time--;
+            // console.log(time);
+        }
+
+        /*
+         * ボタン等設定処理
+         */
+        function disp_setting() {
+            // 「スタート」ボタンを非表示
+            btn_start.style.display = 'none';
+            // 入力エリアを表示
+            input_text.style.display = 'block';
+        }
+
+        /*
+         * キーイベント＆入力判定処理
+         */
+        function keyDownEvent(event) {
+            // キーボードからの入力キー
+            let press_key = event.key;
+            // console.log(event);
+
+            // 入力キーがテキストと一致した場合
+            if (press_key === checkTexts[0].textContent) {
+
+                // add-colorクラスを付与する
+                checkTexts[0].className = 'add-color';
+                // 配列から1文字を削除する
+                checkTexts.shift();
+
+                // 正しい入力の時だけスコアを加算する
+                score++;
+
+                // 配列の残りサイズ
+                let check_zan_len = checkTexts.length;
+                // console.log(check_zan_len);
+
+                // 配列の残りサイズが0になった場合
+                if (check_zan_len === 0) {
+                    // 画面に新しい文字を再表示
+                    createText();
+                }
+            }
+
+            // 自身が入力した文字を表示させる
+            // Shiftは表示しない(他にもあるかも)
+            if (press_key !== "Shift") {
+                let span = document.createElement('span');
+                // 表示の微調整
+                span.style.paddingRight = "1px";
+                // 生成したspan要素に1文字格納
+                span.textContent = press_key;
+                // span要素をp要素に追加していく
+                input_text.appendChild(span);
+            }
+        }
+
+        // ランク判定とメッセージ生成処理
+        function rankCheck(score) {
+            // 返却用のメッセージ
+            let msg = "";
+            msg = score + "文字入力しました。<br>";
+            // 判定
+            if (score < 5) {
+                msg += "ランクBです。";
+            } else {
+                msg += "ランクAです。";
+            }
+            console.log(msg);
+            return msg;
+        };
+
+        // ゲームの終了処理
+        function gameOver(timer_id) {
+            // タイマー終了
+            clearInterval(timer_id);
+
+            // スコアー結果を変数に格納
+            let score_msg = rankCheck(score);
+
+            // 結果エリアを表示
+            msg.style.display = 'block';
+            // スコアー結果を設定
+            msg.innerHTML = score_msg;
+            
+            // リロードボタンを表示
+            btn_reload.style.display = 'block';
+  
+            console.log('ゲーム終了！');
+        };
+    </script>
+</body>
+</html>
