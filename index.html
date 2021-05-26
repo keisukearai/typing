@@ -69,8 +69,6 @@
         let btn_reload = document.getElementById('btn_reload');
         // 入力エリア
         let input_text = document.getElementById('input_text');
-        // 結果エリア
-        let msg_area = document.getElementById('msg_area');
 
         // 複数のテキストを格納する配列
         const textLists = [
@@ -240,6 +238,9 @@
 
             // スコアー結果を変数に格納
             let score_msg = rankCheck(score);
+
+            // 結果エリア
+            let msg_area = document.getElementById('msg_area');
 
             // 結果エリアを表示
             msg_area.style.display = 'block';
