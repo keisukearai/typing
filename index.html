@@ -5,7 +5,7 @@
     <title>タイピングアプリ</title>
     <style>
         body {
-            font-size: 6em; 
+            font-size: 3em; 
             text-align: center;
         }
         #counter {
@@ -14,15 +14,14 @@
             color: #888;
         }
         #wrap {
-            margin-top: 20px;
-            padding: 20px 10px;
+            margin-top: 10px;
+            padding: 1rem;
             background-color: #666;
             font-weight: bold;
             color: #fff;
         }
-        #msg {
+        #msg_area {
             font-size: 1rem; 
-            margin-top: 20px;
             padding: 20px 10px;
             background-color: #4169e1;
             font-weight: bold;
@@ -31,7 +30,6 @@
         }
         #input_text {
             font-size: 1rem; 
-            margin-top: 10px;
             padding: 20px 10px;
             background-color: #666;
             font-weight: bold;
@@ -39,7 +37,8 @@
             display: none;
         }
         #btn_reload {
-            text-align: center;
+            display: block;
+            margin: 0 auto 0 0;
         }
         span {
             transition-property: all;
@@ -54,14 +53,14 @@
     </style>
 </head>
 <body>
-    <p id="counter">3</p>
+    <p id="counter">2</p>
+    <button id="btn_reload" onclick="window.location.reload();">リロード</button>
     <div id="wrap">
         <p id="disp_text"></p>
     </div>
     <p id="input_text"></p>
-    <p id="msg"></p>
-    <button id="btn_start">スタート</button>
-    <button id="btn_reload" onclick="window.location.reload();">リロード</button>
+    <button id="btn_start" onclick="typing_start();">スタート</button>
+    <div id="msg_area"></div>
 
     <script>
         // スタートボタン
@@ -71,7 +70,7 @@
         // 入力エリア
         let input_text = document.getElementById('input_text');
         // 結果エリア
-        let msg = document.getElementById('msg');
+        let msg_area = document.getElementById('msg_area');
 
         // 複数のテキストを格納する配列
         const textLists = [
@@ -94,7 +93,7 @@
         /*
          * ゲームスタート時の処理
          */
-        btn_start.addEventListener('click', () => {
+        function typing_start() {
             // ランダムなテキストを画面に表示
             createText();
 
@@ -106,7 +105,7 @@
 
             // キーボードのイベント処理を追加
             document.addEventListener('keydown', keyDownEvent);
-        });
+        }
 
         /*
          * ランダムなテキストを画面に表示する
@@ -243,9 +242,9 @@
             let score_msg = rankCheck(score);
 
             // 結果エリアを表示
-            msg.style.display = 'block';
+            msg_area.style.display = 'block';
             // スコアー結果を設定
-            msg.innerHTML = score_msg;
+            msg_area.innerHTML = score_msg;
             
             // リロードボタンを表示
             btn_reload.style.display = 'block';
